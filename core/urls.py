@@ -1,9 +1,13 @@
 from django.urls import path
 from django.urls import include
 from rest_framework import routers
+from core import views
 
 
 router = routers.DefaultRouter()
+router.register(r'enderecos', views.EnderecoViewSet)
+router.register(r'users', views.UserViewSet)
+router.register(r'groups', views.GroupViewSet)
 
 
 urlpatterns = [

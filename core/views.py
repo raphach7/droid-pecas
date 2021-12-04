@@ -1,8 +1,9 @@
 from django.contrib.auth.models import User, Group
 from rest_framework import viewsets
-from core.serializers import UserSerializer, GroupSerializer
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication, TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
+from core.models import Endereco
+from core.serializers import UserSerializer, GroupSerializer, EnderecoSerializer
 
     
 class UserViewSet(viewsets.ModelViewSet):
@@ -23,3 +24,13 @@ class GroupViewSet(viewsets.ModelViewSet):
     serializer_class = GroupSerializer
     permission_classes = (IsAuthenticated,)
     authentication_classes = [SessionAuthentication, BasicAuthentication, TokenAuthentication]
+    
+class EnderecoViewSet(viewsets.ModelViewSet):
+    """
+    Endpoint da API que permite que os Enderecos sejam visualizados ou editados.
+    """
+    queryset = Endereco.objects.all()
+    serializer_class = EnderecoSerializer
+    permission_classes = (IsAuthenticated,)
+    authentication_classes = [SessionAuthentication, BasicAuthentication, TokenAuthentication]
+    
