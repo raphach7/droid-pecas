@@ -2,8 +2,10 @@ from django.db import models
 from django.conf import settings
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.contrib.auth.models import User
 from rest_framework.authtoken.models import Token
 from localflavor.br.models import BRPostalCodeField
+from annoying.fields import AutoOneToOneField
 
 
 class Endereco(models.Model):
@@ -45,11 +47,20 @@ class Endereco(models.Model):
     cidade = models.CharField(blank=True, max_length=30)
     complemento = models.CharField(blank=True, max_length=100)
 
+    def __str__(self):
+      return f'{self.rua}, {self.numero}, {self.complemento}, {self.bairro}, {self.cep}, {self.cidade}, {self.estado}'
+
+class Anunciante(models.Model):
+    usuario = AutoOneToOneField(User, on_delete=models.CASCADE, related_name="anunciante")
+    endereco = models.ManyToManyField(Endereco)
+    
+    def __str__(self):
+      return self.usuario.username
+
 '''
 Cria token para cada usuario criado
 '''
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
 def create_auth_token(sender, instance=None, created=False, **kwargs):
     if created:
-        Token.objects.create(user=instance)
         Token.objects.create(user=instance)
