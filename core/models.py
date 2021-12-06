@@ -39,23 +39,40 @@ class Endereco(models.Model):
         ("TO", "Tocantins"),
     )
 
-    cep = BRPostalCodeField(blank=True)
-    rua = models.CharField(blank=True, max_length=256)
+    cep = BRPostalCodeField()
+    rua = models.CharField(max_length=256)
     numero = models.CharField(blank=True, max_length=10)
-    bairro = models.CharField(max_length=200, blank=True)
-    estado = models.CharField(choices=ESTADOS, blank=True, max_length=2)
-    cidade = models.CharField(blank=True, max_length=30)
+    bairro = models.CharField(max_length=200)
+    estado = models.CharField(choices=ESTADOS, max_length=2)
+    cidade = models.CharField(max_length=30)
     complemento = models.CharField(blank=True, max_length=100)
 
     def __str__(self):
       return f'{self.rua}, {self.numero}, {self.complemento}, {self.bairro}, {self.cep}, {self.cidade}, {self.estado}'
 
+class Contato(models.Model):
+    ddd = models.CharField(max_length=2)
+    celular = models.CharField(max_length=10)
+    
+    def __str__(self):
+      return f'{self.ddd} {self.celular}'
+
 class Anunciante(models.Model):
     usuario = AutoOneToOneField(User, on_delete=models.CASCADE, related_name="anunciante")
     endereco = models.ManyToManyField(Endereco)
+    contato = models.ManyToManyField(Contato)
     
     def __str__(self):
       return self.usuario.username
+
+class Demanda(models.Model):
+    descricao = models.TextField()
+    endereco_entrega = models.ForeignKey(Endereco, on_delete=models.CASCADE)
+    anunciante = models.ForeignKey(Anunciante, on_delete=models.CASCADE)
+    status_finalizacao = models.BooleanField(default=False)
+    
+    def __str__(self):
+      return self.descricao
 
 '''
 Cria token para cada usuario criado

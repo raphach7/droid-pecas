@@ -2,8 +2,8 @@ from django.contrib.auth.models import User, Group
 from rest_framework import viewsets
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication, TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
-from core.models import Endereco, Anunciante
-from core.serializers import UserSerializer, GroupSerializer, EnderecoSerializer, AnuncianteSerializer
+from core.models import Endereco, Anunciante, Contato, Demanda
+from core.serializers import UserSerializer, GroupSerializer, EnderecoSerializer, AnuncianteSerializer, ContatoSerializer, DemandaSerializer
 
     
 class UserViewSet(viewsets.ModelViewSet):
@@ -40,6 +40,25 @@ class AnuncianteViewSet(viewsets.ModelViewSet):
     """
     queryset = Anunciante.objects.all()
     serializer_class = AnuncianteSerializer
+    permission_classes = (IsAuthenticated,)
+    authentication_classes = [SessionAuthentication, BasicAuthentication, TokenAuthentication]
+    
+class ContatoViewSet(viewsets.ModelViewSet):
+    """
+    Endpoint da API que permite que os Contatos sejam visualizados ou editados.
+    """
+    queryset = Contato.objects.all()
+    serializer_class = ContatoSerializer
+    permission_classes = (IsAuthenticated,)
+    authentication_classes = [SessionAuthentication, BasicAuthentication, TokenAuthentication]
+    
+    
+class DemandaViewSet(viewsets.ModelViewSet):
+    """
+    Endpoint da API que permite que os Demandas sejam visualizados ou editados.
+    """
+    queryset = Demanda.objects.all()
+    serializer_class = DemandaSerializer
     permission_classes = (IsAuthenticated,)
     authentication_classes = [SessionAuthentication, BasicAuthentication, TokenAuthentication]
     

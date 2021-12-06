@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User, Group
 from rest_framework import serializers
-from core.models import Endereco, Anunciante
+from core.models import Endereco, Anunciante, Contato, Demanda
 
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
@@ -22,4 +22,14 @@ class EnderecoSerializer(serializers.HyperlinkedModelSerializer):
 class AnuncianteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Anunciante
+        fields = '__all__'
+        
+class ContatoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Contato
+        fields = '__all__'
+        
+class DemandaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Demanda
         fields = '__all__'
