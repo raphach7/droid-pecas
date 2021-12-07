@@ -1,6 +1,6 @@
 from django.test import TestCase
 from django.contrib.auth.models import User
-from core.models import Anunciante
+from core.models import Anunciante, Demanda
 from rest_framework.test import APIClient
 
 
@@ -15,9 +15,9 @@ class FluxoPrincipalTestes(TestCase):
     Anunciante.objects.create(usuario = usuario_anunciante)
     
 
-  '''
-  Teste da criacao de demanda
-  '''
+  """
+  Teste CRUD e manipulacao de demanda
+  """
   def test_demanda(self):
     self.setup()
     usuario = User.objects.get(username="bob")  
@@ -35,10 +35,59 @@ class FluxoPrincipalTestes(TestCase):
                 "celular": "98104-2000"}
             }
     
-    url = '/demandas/'
     cliente = APIClient()
-    cliente.credentials(HTTP_AUTHORIZATION='Token ' + str(usuario.auth_token))
-    request = cliente.post(url, format='json', data=data)
-    self.assertQuerysetEqual(str(request.status_code), '201')
-  
+    cliente.credentials(HTTP_AUTHORIZATION="Token " + str(usuario.auth_token))
+    
+    """
+    Criar demanda
+    """
+    url = "/demandas/"
+    request = cliente.post(url, format="json", data=data)
+    self.assertEqual(request.status_code, 201)
+    
+    """
+    Listar demandas
+    """
+    url = "/demandas/"
+    request = cliente.get(url)
+    self.assertEqual(request.status_code, 200)
+    
+    """
+    Finalizar demanda
+    """
+    url = "/demandas/1/finalizar/"
+    request = cliente.get(url)
+    self.assertEqual(request.status_code, 200)
+    
+    demanda = Demanda.objects.get(id=1)
+    self.assertEqual(demanda.status_finalizacao, True)
+    
+    """
+    Editar demanda
+    """
+    data = {"descricao": "roda",
+           "endereco_entrega": {
+               "rua": "Avenida Castro Alves",
+               "numero": "77",
+               "complemento": "Casa",
+               "bairro": "Centro",
+               "cep": "46765-000",
+               "estado": "BA",
+               "cidade": "Piatã"},
+           "contato": {
+               "ddd": "77",
+               "celular": "98104-2000"}
+           }
+    url = "/demandas/1/"
+    request = cliente.put(url, format="json", data=data)
+    self.assertEqual(request.status_code, 200)
+    
+    """
+    Deletar demanda
+    """
+    url = "/demandas/1/"
+    request = cliente.delete(url)
+    self.assertEqual(request.status_code, 200)
+    
+    
   

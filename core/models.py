@@ -104,6 +104,9 @@ class Demanda(models.Model):
     anunciante = models.ForeignKey(Anunciante, on_delete=models.CASCADE)
     status_finalizacao = models.BooleanField(default=False)
     
+    class Meta:
+        ordering = ['-id']
+   
     def __str__(self):
         return self.descricao
 
