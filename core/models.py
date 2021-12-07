@@ -41,7 +41,7 @@ class Endereco(models.Model):
 
     cep = BRPostalCodeField()
     rua = models.CharField(max_length=256)
-    numero = models.CharField(blank=True, max_length=10)
+    numero = models.CharField(max_length=10, default="sn")
     bairro = models.CharField(max_length=200)
     estado = models.CharField(choices=ESTADOS, max_length=2)
     cidade = models.CharField(max_length=30)
