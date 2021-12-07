@@ -27,10 +27,11 @@ class AnuncianteSerializer(serializers.ModelSerializer):
 class ContatoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Contato
-        fields = "__all__"
+        fields = ["ddd", "celular"]
         
 class DemandaSerializer(serializers.ModelSerializer):
     endereco_entrega = EnderecoSerializer()
+    contato = ContatoSerializer()
     anunciante = serializers.CharField()
 
     class Meta:

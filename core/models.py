@@ -54,11 +54,11 @@ class Endereco(models.Model):
         try:
           endereco = Endereco.objects.get(cep=self["cep"],
                                           rua=self["rua"],
-                                          numero=self["numero"],
+                                          numero=self["numero"] if "numero" in self else "sn",
                                           bairro=self["bairro"],
                                           estado=self["estado"],
                                           cidade=self["cidade"],
-                                          complemento=self["complemento"]
+                                          complemento=self["complemento"] if "complemento" in self else ""
                                           )
         except:
           endereco = Endereco.objects.create(cep=self["cep"],
@@ -77,6 +77,17 @@ class Contato(models.Model):
     
     def __str__(self):
         return f'{self.ddd} {self.celular}'
+    
+    def create(self):
+        try:
+          contato = Contato.objects.get(ddd=self["ddd"],
+                                        celular=self["celular"],
+                                        )
+        except:
+          contato = Contato.objects.create(ddd=self["ddd"],
+                                           celular=self["celular"],
+                                           )
+        return contato
 
 class Anunciante(models.Model):
     usuario = AutoOneToOneField(User, on_delete=models.CASCADE, related_name="anunciante")
@@ -89,6 +100,7 @@ class Anunciante(models.Model):
 class Demanda(models.Model):
     descricao = models.TextField()
     endereco_entrega = models.ForeignKey(Endereco, on_delete=models.CASCADE)
+    contato = models.ForeignKey(Contato, on_delete=models.CASCADE)
     anunciante = models.ForeignKey(Anunciante, on_delete=models.CASCADE)
     status_finalizacao = models.BooleanField(default=False)
     

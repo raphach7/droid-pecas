@@ -32,6 +32,7 @@ class DemandaAdmin(admin.ModelAdmin):
         "descricao",
         "endereco_entrega",
         "anunciante",
+        "contato",
         "status_finalizacao"
     )
 

@@ -13,7 +13,7 @@ class UserViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows users to be viewed or edited.
     """
-    queryset = User.objects.all().order_by('-date_joined')
+    queryset = User.objects.all().order_by("-date_joined")
     serializer_class = UserSerializer
     permission_classes = (IsAdminUser,)
     authentication_classes = [SessionAuthentication, BasicAuthentication, TokenAuthentication]
@@ -67,12 +67,17 @@ class DemandaViewSet(viewsets.ModelViewSet):
     
     def create(self, request, *args, **kwargs):
         dados=request.data
-        anunciante = Anunciante.objects.get(usuario=request.user)
-        endereco = Endereco.create(dados['endereco_entrega'])
+        try:
+            anunciante = Anunciante.objects.get(usuario=request.user)
+        except:
+            return Response({"detail": "Usuário não é anunciante"}, status=status.HTTP_400_BAD_REQUEST)
+        endereco = Endereco.create(dados["endereco_entrega"])
+        contato = Contato.create(dados["contato"])
         demanda = Demanda.objects.create(anunciante=anunciante,
-                               endereco_entrega=endereco,
-                               descricao=dados['descricao'],
-                               )
+                                        endereco_entrega=endereco,
+                                        descricao=dados["descricao"],
+                                        contato=contato
+                                        )
         return Response(DemandaSerializer(demanda).data, status=status.HTTP_201_CREATED)
     
     def get_queryset(self):
@@ -82,14 +87,18 @@ class DemandaViewSet(viewsets.ModelViewSet):
         dados=request.data
         demanda = Demanda.objects.get(id=pk)
         if demanda.anunciante.usuario == request.user:
-            if "endereco_entrega" in dados.keys():
-                endereco = Endereco.create(dados['endereco_entrega'])
+            if "endereco_entrega" in dados:
+                endereco = Endereco.create(dados["endereco_entrega"])
                 demanda.endereco_entrega = endereco
+            
+            if "contato" in dados:
+                contato = Contato.create(dados["contato"])
+                demanda.contato = contato
 
-            if "descricao" in dados.keys():
+            if "descricao" in dados:
                 demanda.descricao = dados["descricao"]
 
-            if "status_finalizacao" in dados.keys():
+            if "status_finalizacao" in dados:
                 demanda.status_finalizacao = dados["status_finalizacao"]
         
             demanda.save()
