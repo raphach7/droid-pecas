@@ -50,7 +50,26 @@ class Endereco(models.Model):
     def __str__(self):
         return f'{self.rua}, {self.numero}, {self.complemento}, {self.bairro}, {self.cep}, {self.cidade}, {self.estado}'
     
-
+    def create(self):
+        try:
+          endereco = Endereco.objects.get(cep=self["cep"],
+                                          rua=self["rua"],
+                                          numero=self["numero"],
+                                          bairro=self["bairro"],
+                                          estado=self["estado"],
+                                          cidade=self["cidade"],
+                                          complemento=self["complemento"]
+                                          )
+        except:
+          endereco = Endereco.objects.create(cep=self["cep"],
+                                              rua=self["rua"],
+                                              numero= self["numero"] if "numero" in self else "sn",
+                                              bairro=self["bairro"],
+                                              estado=self["estado"],
+                                              cidade=self["cidade"],
+                                              complemento= self["complemento"] if "complemento" in self else ""
+                                              )
+        return endereco
 
 class Contato(models.Model):
     ddd = models.CharField(max_length=2)

@@ -68,7 +68,7 @@ class DemandaViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         dados=request.data
         anunciante = Anunciante.objects.get(usuario=request.user)
-        endereco = Endereco.objects.get(id=dados['endereco_entrega'])
+        endereco = Endereco.create(dados['endereco_entrega'])
         demanda = Demanda.objects.create(anunciante=anunciante,
                                endereco_entrega=endereco,
                                descricao=dados['descricao'],
@@ -83,7 +83,7 @@ class DemandaViewSet(viewsets.ModelViewSet):
         demanda = Demanda.objects.get(id=pk)
         if demanda.anunciante.usuario == request.user:
             if "endereco_entrega" in dados.keys():
-                endereco = Endereco.objects.get(id=dados['endereco_entrega'])
+                endereco = Endereco.create(dados['endereco_entrega'])
                 demanda.endereco_entrega = endereco
 
             if "descricao" in dados.keys():
