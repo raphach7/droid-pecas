@@ -6,30 +6,33 @@ from core.models import Endereco, Anunciante, Contato, Demanda
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = User
-        fields = ['url', 'username', 'email', 'groups']
+        fields = ["url", "username", "email", "groups"]
 
 
 class GroupSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Group
-        fields = ['url', 'name']
+        fields = ["url", "name"]
 
 class EnderecoSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Endereco
-        fields = ["cep", "rua", "numero", "bairro", "estado", "cidade", "complemento"]
+        fields = ["rua", "numero", "complemento", "bairro", "cep", "estado", "cidade"]
         
 class AnuncianteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Anunciante
-        fields = '__all__'
+        fields = "__all__"
         
 class ContatoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Contato
-        fields = '__all__'
+        fields = "__all__"
         
 class DemandaSerializer(serializers.ModelSerializer):
+    endereco_entrega = EnderecoSerializer()
+    anunciante = serializers.CharField()
+
     class Meta:
         model = Demanda
-        fields = '__all__'
+        fields = "__all__"

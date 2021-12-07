@@ -48,14 +48,16 @@ class Endereco(models.Model):
     complemento = models.CharField(blank=True, max_length=100)
 
     def __str__(self):
-      return f'{self.rua}, {self.numero}, {self.complemento}, {self.bairro}, {self.cep}, {self.cidade}, {self.estado}'
+        return f'{self.rua}, {self.numero}, {self.complemento}, {self.bairro}, {self.cep}, {self.cidade}, {self.estado}'
+    
+
 
 class Contato(models.Model):
     ddd = models.CharField(max_length=2)
     celular = models.CharField(max_length=10)
     
     def __str__(self):
-      return f'{self.ddd} {self.celular}'
+        return f'{self.ddd} {self.celular}'
 
 class Anunciante(models.Model):
     usuario = AutoOneToOneField(User, on_delete=models.CASCADE, related_name="anunciante")
@@ -63,7 +65,7 @@ class Anunciante(models.Model):
     contato = models.ManyToManyField(Contato)
     
     def __str__(self):
-      return self.usuario.username
+        return self.usuario.username
 
 class Demanda(models.Model):
     descricao = models.TextField()
@@ -72,7 +74,7 @@ class Demanda(models.Model):
     status_finalizacao = models.BooleanField(default=False)
     
     def __str__(self):
-      return self.descricao
+        return self.descricao
 
 '''
 Cria token para cada usuario criado

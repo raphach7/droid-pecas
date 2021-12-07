@@ -1,43 +1,42 @@
 from django.contrib import admin
 from core.models import Endereco, Anunciante, Contato, Demanda
-from PIL import Image
 
 class EnderecoAdmin(admin.ModelAdmin):
-  list_display = (
-    "rua",
-    "numero",
-    "complemento",
-    "bairro",
-    "cep",
-    "estado",
-    "cidade",
-  )
+    list_display = (
+        "rua",
+        "numero",
+        "complemento",
+        "bairro",
+        "cep",
+        "estado",
+        "cidade",
+    )
   
-  search_fields = ("cep",)
+    search_fields = ("cep",)
 
 class AnuncianteAdmin(admin.ModelAdmin):
-  list_display = (
-    "usuario",
-  )
-  
-  search_fields = ("usuario",)
+    list_display = (
+        "usuario",
+    )
+
+    search_fields = ("usuario",)
   
 class ContatoAdmin(admin.ModelAdmin):
-  list_display = (
-    "ddd",
-    "celular"
-  )
+    list_display = (
+        "ddd",
+        "celular"
+    )
   
 class DemandaAdmin(admin.ModelAdmin):
-  list_display = (
-    "descricao",
-    "endereco_entrega",
-    "anunciante",
-    "status_finalizacao"
-  )
-  
-  list_filter = ['status_finalizacao']
-  search_fields = ("anunciante", "descricao",)
+    list_display = (
+        "descricao",
+        "endereco_entrega",
+        "anunciante",
+        "status_finalizacao"
+    )
+
+    list_filter = ["status_finalizacao"]
+    search_fields = ("anunciante", "descricao",)
 
   
 admin.site.register(Endereco, EnderecoAdmin)
