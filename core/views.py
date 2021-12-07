@@ -1,7 +1,10 @@
 from django.contrib.auth.models import User, Group
 from rest_framework import viewsets
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication, TokenAuthentication
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from rest_framework.response import Response
+from rest_framework import status
+from rest_framework.decorators import action
 from core.models import Endereco, Anunciante, Contato, Demanda
 from core.serializers import UserSerializer, GroupSerializer, EnderecoSerializer, AnuncianteSerializer, ContatoSerializer, DemandaSerializer
 
@@ -12,7 +15,7 @@ class UserViewSet(viewsets.ModelViewSet):
     """
     queryset = User.objects.all().order_by('-date_joined')
     serializer_class = UserSerializer
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (IsAdminUser,)
     authentication_classes = [SessionAuthentication, BasicAuthentication, TokenAuthentication]
 
 
@@ -22,7 +25,7 @@ class GroupViewSet(viewsets.ModelViewSet):
     """
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (IsAdminUser,)
     authentication_classes = [SessionAuthentication, BasicAuthentication, TokenAuthentication]
     
 class EnderecoViewSet(viewsets.ModelViewSet):
@@ -31,7 +34,7 @@ class EnderecoViewSet(viewsets.ModelViewSet):
     """
     queryset = Endereco.objects.all()
     serializer_class = EnderecoSerializer
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (IsAdminUser,)
     authentication_classes = [SessionAuthentication, BasicAuthentication, TokenAuthentication]
     
 class AnuncianteViewSet(viewsets.ModelViewSet):
@@ -40,7 +43,7 @@ class AnuncianteViewSet(viewsets.ModelViewSet):
     """
     queryset = Anunciante.objects.all()
     serializer_class = AnuncianteSerializer
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (IsAdminUser,)
     authentication_classes = [SessionAuthentication, BasicAuthentication, TokenAuthentication]
     
 class ContatoViewSet(viewsets.ModelViewSet):
@@ -49,7 +52,7 @@ class ContatoViewSet(viewsets.ModelViewSet):
     """
     queryset = Contato.objects.all()
     serializer_class = ContatoSerializer
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (IsAdminUser,)
     authentication_classes = [SessionAuthentication, BasicAuthentication, TokenAuthentication]
     
     
@@ -62,3 +65,52 @@ class DemandaViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,)
     authentication_classes = [SessionAuthentication, BasicAuthentication, TokenAuthentication]
     
+    def create(self, request, *args, **kwargs):
+        dados=request.data
+        anunciante = Anunciante.objects.get(usuario=request.user)
+        endereco = Endereco.objects.get(id=dados['endereco_entrega'])
+        demanda = Demanda.objects.create(anunciante=anunciante,
+                               endereco_entrega=endereco,
+                               descricao=dados['descricao'],
+                               )
+        return Response(DemandaSerializer(demanda).data, status=status.HTTP_201_CREATED)
+    
+    def get_queryset(self):
+        return Demanda.objects.filter(anunciante__usuario=self.request.user)
+    
+    def update(self, request, pk=None):
+        dados=request.data
+        demanda = Demanda.objects.get(id=pk)
+        if demanda.anunciante.usuario == request.user:
+            if "endereco_entrega" in dados.keys():
+                endereco = Endereco.objects.get(id=dados['endereco_entrega'])
+                demanda.endereco_entrega = endereco
+
+            if "descricao" in dados.keys():
+                demanda.descricao = dados["descricao"]
+
+            if "status_finalizacao" in dados.keys():
+                demanda.status_finalizacao = dados["status_finalizacao"]
+        
+            demanda.save()
+            return Response(DemandaSerializer(demanda).data, status=status.HTTP_200_OK)
+        else:
+            return Response({"detail": f"Usuário não tem permissão para deletar essa demanda"}, status=status.HTTP_203_NON_AUTHORITATIVE_INFORMATION)
+    
+    def destroy(self, request, pk=None):
+        demanda = Demanda.objects.get(id=pk)
+        if demanda.anunciante.usuario == request.user:
+            demanda.delete()
+            return Response({"detail": f"Demanda de descrição {demanda} deletada"}, status=status.HTTP_200_OK)
+        else:
+            return Response({"detail": f"Usuário não tem permissão para deletar essa demanda"}, status=status.HTTP_203_NON_AUTHORITATIVE_INFORMATION)
+    
+    @action(detail=True, methods=["get"])
+    def finalizar(self, request, pk=None):
+        demanda = Demanda.objects.get(id=pk)
+        if demanda.anunciante.usuario == request.user:
+            demanda.status_finalizacao = True
+            demanda.save()
+            return Response({"detail": f"Demanda de descrição {demanda} finalizada"}, status=status.HTTP_200_OK)
+        else:
+            return Response({"detail": f"Usuário não tem permissão para finalizar essa demanda"}, status=status.HTTP_203_NON_AUTHORITATIVE_INFORMATION)
