@@ -12,6 +12,14 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 
 from pathlib import Path
 import os
+import environ
+
+env = environ.Env(
+    # set casting, default value
+    DEBUG=(bool, False),
+    ALLOWED_HOSTS=(list, ["*"]),
+    
+)
 
 # Build paths inside the project like this: BASE_DIR / "subdir".
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -21,12 +29,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-mr$!_k_r0+rbo)&^3-72@_o*gy-mh!@!gnw)l5h9di5xb^cwkm"
+SECRET_KEY = env("SECRET_KEY")
 
 # SECURITY WARNING: don"t run with debug turned on in production!
-DEBUG = True
+DEBUG = env("DEBUG")
 
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = env("ALLOWED_HOSTS")
 
 
 # Application definition
@@ -41,6 +49,7 @@ INSTALLED_APPS = [
     "django_extensions",
     "rest_framework",
     "rest_framework.authtoken",
+    "corsheaders",
     "annoying",
     "localflavor",
     "core",
@@ -50,6 +59,7 @@ MIDDLEWARE = [
     'whitenoise.middleware.WhiteNoiseMiddleware',
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -82,14 +92,7 @@ WSGI_APPLICATION = "droidpecas.wsgi.application"
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql_psycopg2",
-        "NAME": "droid-bd",
-        "USER": "postgres",
-        "PASSWORD": "postgres",
-        "HOST": "db",
-        "PORT": "5432",
-    }
+     "default": env.db(),
 }
 
 
