@@ -217,7 +217,7 @@
 			"response": []
 		},
 		{
-			"name": "Demandas - Editar Copy",
+			"name": "Demandas - Deletar",
 			"request": {
 				"auth": {
 					"type": "basic",

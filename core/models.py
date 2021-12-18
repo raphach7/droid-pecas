@@ -7,9 +7,7 @@ from rest_framework.authtoken.models import Token
 from localflavor.br.models import BRPostalCodeField
 from annoying.fields import AutoOneToOneField
 
-
-class Endereco(models.Model):
-    ESTADOS = (
+ESTADOS = (
         ("AC", "Acre"),
         ("AL", "Alagoas"),
         ("AP", "Amapá"),
@@ -38,6 +36,7 @@ class Endereco(models.Model):
         ("SE", "Sergipe"),
         ("TO", "Tocantins"),
     )
+class Endereco(models.Model):
 
     cep = BRPostalCodeField()
     rua = models.CharField(max_length=256)
