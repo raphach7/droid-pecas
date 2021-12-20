@@ -21,6 +21,12 @@ Este é o repositório de uma API REST utilizando o Django e Django Rest Framewo
 
 ## Como funciona
 
+Copie `.env-exemple` para `.env` e configure as variáveis de ambiente.
+
+```shell
+cp .env-exemple .env
+```
+
 Para executar é necessário fazer a `build` usando o docker-compose:
 
 ```
@@ -31,13 +37,6 @@ Após a build, é necessário realizar um `up` nos containes:
 
 ```
 docker-compose up
-```
-
-Com os containes `up`, precisa entrar no container `api` e executar o `migrate`:
-
-```
-docker-compose exec api bash
-./manage.py migrate
 ```
 
 Dentro do container, também é necessário criar um superuser:
@@ -58,7 +57,7 @@ O teste pode ser executado dentro do container `api`:
 
 ```
 docker-compose exec api bash
-./manage.py test core
+./manage.py test
 ```
 
 Esse teste irá testar a criação de uma Demanda, listagem de Demandas, ver Demanda, alterar Demanda, finalizar Demanda e deletar Demanda
@@ -66,7 +65,6 @@ Esse teste irá testar a criação de uma Demanda, listagem de Demandas, ver Dem
 ###### Observações:
 
 * A API está configurada para usar o arquivo `.env` com as configurações, este arquivo está no repositório.
-* Para as requisições no Postman, existe uma pasta de nome `Postman` que contém o `JSON` para importar
 
 ## Considerações finais
 
