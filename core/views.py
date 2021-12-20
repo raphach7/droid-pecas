@@ -71,12 +71,21 @@ class DemandaViewSet(viewsets.ModelViewSet):
             anunciante = Anunciante.objects.get(usuario=request.user)
         except:
             return Response({"detail": "Usuário não é anunciante"}, status=status.HTTP_400_BAD_REQUEST)
-        endereco = Endereco.create(dados["endereco_entrega"])
-        contato = Contato.create(dados["contato"])
+        endereco, e = Endereco.objects.get_or_create(cep=dados["endereco_entrega"]["cep"],
+                                                      rua=dados["endereco_entrega"]["rua"],
+                                                      numero=dados["endereco_entrega"]["numero"] if "numero" in dados else "sn",
+                                                      bairro=dados["endereco_entrega"]["bairro"],
+                                                      estado=dados["endereco_entrega"]["estado"],
+                                                      cidade=dados["endereco_entrega"]["cidade"],
+                                                      complemento=dados["endereco_entrega"]["complemento"] if "complemento" in dados else ""
+                                                    )
+        contato, c = Contato.objects.get_or_create(ddd=dados["contato"]["ddd"],
+                                                    celular=dados["contato"]["celular"],
+                                                  )
         demanda = Demanda.objects.create(anunciante=anunciante,
-                                        endereco_entrega=endereco,
-                                        descricao=dados["descricao"],
-                                        contato=contato
+                                            endereco_entrega=endereco,
+                                            descricao=dados["descricao"],
+                                            contato=contato
                                         )
         return Response(DemandaSerializer(demanda).data, status=status.HTTP_201_CREATED)
     
@@ -88,11 +97,20 @@ class DemandaViewSet(viewsets.ModelViewSet):
         demanda = Demanda.objects.get(id=pk)
         if demanda.anunciante.usuario == request.user:
             if "endereco_entrega" in dados:
-                endereco = Endereco.create(dados["endereco_entrega"])
+                endereco, e = Endereco.objects.get_or_create(cep=dados["endereco_entrega"]["cep"],
+                                                               rua=dados["endereco_entrega"]["rua"],
+                                                               numero=dados["endereco_entrega"]["numero"] if "numero" in dados else "sn",
+                                                               bairro=dados["endereco_entrega"]["bairro"],
+                                                               estado=dados["endereco_entrega"]["estado"],
+                                                               cidade=dados["endereco_entrega"]["cidade"],
+                                                               complemento=dados["endereco_entrega"]["complemento"] if "complemento" in dados else ""
+                                                             )
                 demanda.endereco_entrega = endereco
             
             if "contato" in dados:
-                contato = Contato.create(dados["contato"])
+                contato, c = Contato.objects.get_or_create(ddd=dados["contato"]["ddd"],
+                                                          celular=dados["contato"]["celular"],
+                                                        )
                 demanda.contato = contato
 
             if "descricao" in dados:

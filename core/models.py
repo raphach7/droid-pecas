@@ -48,45 +48,12 @@ class Endereco(models.Model):
 
     def __str__(self):
         return f'{self.rua}, {self.numero}, {self.complemento}, {self.bairro}, {self.cep}, {self.cidade}, {self.estado}'
-    
-    def create(self):
-        try:
-          endereco = Endereco.objects.get(cep=self["cep"],
-                                          rua=self["rua"],
-                                          numero=self["numero"] if "numero" in self else "sn",
-                                          bairro=self["bairro"],
-                                          estado=self["estado"],
-                                          cidade=self["cidade"],
-                                          complemento=self["complemento"] if "complemento" in self else ""
-                                          )
-        except:
-          endereco = Endereco.objects.create(cep=self["cep"],
-                                              rua=self["rua"],
-                                              numero= self["numero"] if "numero" in self else "sn",
-                                              bairro=self["bairro"],
-                                              estado=self["estado"],
-                                              cidade=self["cidade"],
-                                              complemento= self["complemento"] if "complemento" in self else ""
-                                              )
-        return endereco
-
 class Contato(models.Model):
     ddd = models.CharField(max_length=2)
     celular = models.CharField(max_length=10)
     
     def __str__(self):
         return f'{self.ddd} {self.celular}'
-    
-    def create(self):
-        try:
-          contato = Contato.objects.get(ddd=self["ddd"],
-                                        celular=self["celular"],
-                                        )
-        except:
-          contato = Contato.objects.create(ddd=self["ddd"],
-                                           celular=self["celular"],
-                                           )
-        return contato
 
 class Anunciante(models.Model):
     usuario = AutoOneToOneField(User, on_delete=models.CASCADE, related_name="anunciante")
