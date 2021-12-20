@@ -21,8 +21,6 @@ Este é o repositório de uma API REST utilizando o Django e Django Rest Framewo
 
 ## Como funciona
 
-
-
 Copie `.env-exemple` para `.env` e configure as variáveis de ambiente.
 
 ```shell
@@ -59,7 +57,7 @@ O teste pode ser executado dentro do container `api`:
 
 ```
 docker-compose exec api bash
-./manage.py test core
+./manage.py test
 ```
 
 Esse teste irá testar a criação de uma Demanda, listagem de Demandas, ver Demanda, alterar Demanda, finalizar Demanda e deletar Demanda
